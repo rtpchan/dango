@@ -1,5 +1,6 @@
 # Dango 
-** not tested, not production ready, and ABSOLUTELY NO WARRANTY **
+**not tested, not production ready, and ABSOLUTELY NO WARRANTY**
+
 Dango is a collection of functions that can be used with [Ebiten](ebiten.org)
 
 
