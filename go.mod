@@ -1,4 +1,4 @@
-module iatearock.com/dango
+module github.com/iatearock/dango
 
 go 1.18
 
