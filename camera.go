@@ -11,12 +11,13 @@ import (
 	"golang.org/x/image/math/f64"
 )
 
-// Draw a world image, then use camera to project world to Screen
+// Camera projects world to Screen
 type Camera struct {
 	ViewPort   f64.Vec2 // viewport should be the same as the window size
 	Position   f64.Vec2 // points camera to `Position` in the world
 	ZoomFactor int
 	Rotation   float64
+	matrix     ebiten.GeoM
 }
 
 func (c *Camera) String() string {
@@ -31,6 +32,17 @@ func (c *Camera) viewportCenter() f64.Vec2 {
 		c.ViewPort[0] * 0.5,
 		c.ViewPort[1] * 0.5,
 	}
+}
+
+// UpdateMatrix when position/rotation/zoom changes
+func (c *Camera) UpdateMatrix() {
+	c.matrix = c.worldMatrix()
+}
+
+// Matrix return current camera matrix
+// CameraMatrix.Concat(SpriteMatrix)
+func (c *Camera) Matrix() ebiten.GeoM {
+	return c.matrix
 }
 
 func (c *Camera) worldMatrix() ebiten.GeoM {

@@ -23,6 +23,14 @@ str, err := vgs.GetCSV("assets/csv/red.csv") // [][]string
 Adopted from ebiten camera example:
 https://github.com/hajimehoshi/ebiten/tree/main/examples/camera
 
+```
+cam := &dango.Camera{}
+cam.UpdateMatrix()
+mat := cam.Matrix()
+mat.Concat(Sprite.GeoM) // multiply sprite's matrix to camera matrix
+screen.Draw(Sprite, &ebiten.DrawImageOptions{GeoM:mat})
+```
+
 ## scene
 Scene manager adopted from ebiten Block example
 Handle transition between scenes that implement Update() and Draw(*ebiten.Image)
