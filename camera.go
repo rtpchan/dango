@@ -13,7 +13,7 @@ import (
 
 // Camera projects world to Screen
 type Camera struct {
-	ViewPort   f64.Vec2 // viewport should be the same as the window size
+	ViewPort   f64.Vec2 // viewport should be the same as the window size/resolution
 	Position   f64.Vec2 // points camera to `Position` in the world
 	ZoomFactor int
 	Rotation   float64
@@ -27,6 +27,14 @@ func (c *Camera) String() string {
 	)
 }
 
+func (c *Camera) SetViewPort(w, h int) {
+	c.ViewPort = [2]float64{float64(w), float64(h)}
+}
+
+func (c *Camera) SetPosition(x, y float64) {
+	c.Position = [2]float64{x, y}
+}
+
 func (c *Camera) viewportCenter() f64.Vec2 {
 	return f64.Vec2{
 		c.ViewPort[0] * 0.5,
@@ -35,7 +43,7 @@ func (c *Camera) viewportCenter() f64.Vec2 {
 }
 
 // UpdateMatrix when position/rotation/zoom changes
-func (c *Camera) UpdateMatrix() {
+func (c *Camera) Update() {
 	c.matrix = c.worldMatrix()
 }
 
@@ -43,6 +51,15 @@ func (c *Camera) UpdateMatrix() {
 // CameraMatrix.Concat(SpriteMatrix)
 func (c *Camera) Matrix() ebiten.GeoM {
 	return c.matrix
+}
+
+// Concat camera's matrix with m
+func (c *Camera) Concat(m ebiten.GeoM) ebiten.GeoM {
+	nm := ebiten.GeoM{}
+	nm.Concat(m)
+	nm.Concat(c.matrix)
+	return nm
+
 }
 
 func (c *Camera) worldMatrix() ebiten.GeoM {
@@ -68,7 +85,7 @@ func (c *Camera) Render(screen, world *ebiten.Image) {
 }
 
 func (c *Camera) ScreenToWorld(posX, posY int) (float64, float64) {
-	inverseMatrix := c.worldMatrix()
+	inverseMatrix := c.matrix
 	if inverseMatrix.IsInvertible() {
 		inverseMatrix.Invert()
 		return inverseMatrix.Apply(float64(posX), float64(posY))
@@ -76,6 +93,11 @@ func (c *Camera) ScreenToWorld(posX, posY int) (float64, float64) {
 		// When scaling it can happend that matrix is not invertable
 		return math.NaN(), math.NaN()
 	}
+}
+
+func (c *Camera) WorldToScreen(wx, wy float64) (int, int) {
+	sx, sy := c.matrix.Apply(wx, wy)
+	return int(sx), int(sy)
 }
 
 // IsPointInViewport check is a point in on screen

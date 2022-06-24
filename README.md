@@ -1,4 +1,5 @@
 # Dango 
+**combined and adopted from various libraries, refer to original libraries**
 **not tested, not production ready, and ABSOLUTELY NO WARRANTY**
 
 Dango is a collection of functions that can be used with [Ebiten](ebiten.org)
@@ -16,7 +17,8 @@ vfs = dango.NewFS(data)
 // example usage
 img, err := vfs.GetImage("assets/images/red.png") // *ebiten.Image
 ff, err := vfs.GetFontFace("assets/font/red.ttf") // font.Face
-str, err := vgs.GetCSV("assets/csv/red.csv") // [][]string
+str, err := vfs.GetCSV("assets/csv/red.csv") // [][]string
+byte, err := vfs.ReadFile("assets/csv/red.txt") // []byte
 ```
 
 ## camera
@@ -26,8 +28,7 @@ https://github.com/hajimehoshi/ebiten/tree/main/examples/camera
 ```
 cam := &dango.Camera{}
 cam.UpdateMatrix()
-mat := cam.Matrix()
-mat.Concat(Sprite.GeoM) // multiply sprite's matrix to camera matrix
+mat := cam.Concat(Sprite.GeoM) // multiply sprite's matrix to camera matrix
 screen.Draw(Sprite, &ebiten.DrawImageOptions{GeoM:mat})
 ```
 
