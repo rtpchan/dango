@@ -26,10 +26,15 @@ Adopted from ebiten camera example:
 https://github.com/hajimehoshi/ebiten/tree/main/examples/camera
 
 ```
-cam := &dango.Camera{}
-cam.UpdateMatrix()
-mat := cam.Concat(Sprite.GeoM) // multiply sprite's matrix to camera matrix
-screen.Draw(Sprite, &ebiten.DrawImageOptions{GeoM:mat})
+cam := &dango.Camera{}  // setup camera 
+cam.SetViewPort(w, h)
+cam.Update() // update when position/rotation/zoom/viewport change
+
+spriteOp := &ebiten.DrawImageOptions{}  // init options, and then apply sprite's transformation to spriteOp
+spriteOP.GeoM = cam.Concat(spriteOp.GeoM) // multiply sprite's matrix to camera matrix
+screen.Draw(sprite, spriteOp)
+
+screenX, screenY := cam.WorldToScreen(worldX, worldY) // transform coordinates
 ```
 
 ## scene
