@@ -42,7 +42,8 @@ func (b *UI) IsMouseOnButton() bool {
 }
 
 func (b *UI) IsJustReleased() bool {
-	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) &&
+	if b.Active &&
+		inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) &&
 		b.IsMouseOnButton() {
 		return true
 	}
@@ -50,7 +51,8 @@ func (b *UI) IsJustReleased() bool {
 }
 
 func (b *UI) IsJustPressed() bool {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) &&
+	if b.Active &&
+		inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) &&
 		b.IsMouseOnButton() {
 		return true
 	}
@@ -58,7 +60,8 @@ func (b *UI) IsJustPressed() bool {
 }
 
 func (b *UI) IsDown() bool {
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) &&
+	if b.Active &&
+		ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) &&
 		b.IsMouseOnButton() {
 		return true
 	}
