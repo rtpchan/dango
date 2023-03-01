@@ -1,5 +1,6 @@
 # Dango 
 **combined and adopted from various libraries, refer to original libraries**
+
 **not tested, not production ready, and ABSOLUTELY NO WARRANTY**
 
 Dango is a collection of functions that can be used with [Ebiten](ebiten.org)
@@ -41,9 +42,6 @@ screenX, screenY := cam.WorldToScreen(worldX, worldY) // transform coordinates
 Scene manager adopted from ebiten Block example
 Handle transition between scenes that implement Update() and Draw(*ebiten.Image)
 
-## vector
-Vector maths, **copied** directly from, 
-https://github.com/jakecoffman/cp v1.1.0
 
 ## id
 Simple unique id generator, concurrency safe, I think.
