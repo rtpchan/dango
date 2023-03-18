@@ -3,6 +3,8 @@ package dango
 import (
 	"errors"
 	"math"
+
+	"golang.org/x/image/math/f64"
 )
 
 // general helper functions
@@ -15,8 +17,9 @@ func Tolerance(a, b, epsilon float64) bool {
 }
 
 // DistanceTolerance check if two 2D positions are close enough
-func DistanceTolerance(a, b Vector, epsilon float64) bool {
-	delta := a.Distance(b)
+func DistanceTolerance(a, b f64.Vec2, epsilon float64) bool {
+	// delta := a.Distance(b)
+	delta := math.Sqrt(math.Pow(a[0]-b[0], 2) + math.Pow(a[1]-b[1], 2))
 	return delta < epsilon
 }
 

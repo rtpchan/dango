@@ -45,3 +45,20 @@ Handle transition between scenes that implement Update() and Draw(*ebiten.Image)
 
 ## id
 Simple unique id generator, concurrency safe, I think.
+
+## bitmasks 
+bits.go provide bitmask functions with mutex lock
+Example:
+```
+const {
+	s1 = 1 << iota
+	s2
+	s3
+    s4
+}
+
+b = NewBits()
+b.Set(s2|s3)
+b.Has(s1|s2)  // true, matched any bit
+b.HasAll(s1|s2) // false, need to match all bits
+ ```
