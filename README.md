@@ -32,7 +32,7 @@ cam.SetViewPort(w, h)
 cam.Update() // update when position/rotation/zoom/viewport change
 
 spriteOp := &ebiten.DrawImageOptions{}  // init options, and then apply sprite's transformation to spriteOp
-spriteOP.GeoM = cam.Concat(spriteOp.GeoM) // multiply sprite's matrix to camera matrix
+spriteOP.GeoM.Concat(cam.GeoM()) // multiply sprite's matrix to camera matrix
 screen.Draw(sprite, spriteOp)
 
 screenX, screenY := cam.WorldToScreen(worldX, worldY) // transform coordinates

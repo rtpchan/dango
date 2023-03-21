@@ -5,6 +5,7 @@ package dango
 
 import (
 	"fmt"
+	"log"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -27,10 +28,12 @@ func (c *Camera) String() string {
 	)
 }
 
+// SetViewPort set the size of the window
 func (c *Camera) SetViewPort(w, h int) {
 	c.ViewPort = [2]float64{float64(w), float64(h)}
 }
 
+// SetPosition moves camera to location x, y
 func (c *Camera) SetPosition(x, y float64) {
 	c.Position = [2]float64{x, y}
 }
@@ -53,13 +56,17 @@ func (c *Camera) Matrix() ebiten.GeoM {
 	return c.matrix
 }
 
-// Concat camera's matrix with m
+func (c *Camera) GeoM() ebiten.GeoM {
+	return c.matrix
+}
+
+// DEPRECATED,  Concat camera's matrix with m
 func (c *Camera) Concat(m ebiten.GeoM) ebiten.GeoM {
+	log.Println("DEPRECATED, use m.Concat(c.GeoM()) instead")
 	nm := ebiten.GeoM{}
 	nm.Concat(m)
 	nm.Concat(c.matrix)
 	return nm
-
 }
 
 func (c *Camera) worldMatrix() ebiten.GeoM {
@@ -95,9 +102,9 @@ func (c *Camera) ScreenToWorld(posX, posY int) (float64, float64) {
 	}
 }
 
-func (c *Camera) WorldToScreen(wx, wy float64) (int, int) {
+func (c *Camera) WorldToScreen(wx, wy float64) (float64, float64) {
 	sx, sy := c.matrix.Apply(wx, wy)
-	return int(sx), int(sy)
+	return sx, sy
 }
 
 // IsPointInViewport check is a point in on screen
