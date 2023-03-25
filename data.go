@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"image"
+	"image/draw"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -38,6 +39,24 @@ func (f *FS) GetImage(path string) (*ebiten.Image, error) {
 		return nil, err
 	}
 	return ebiten.NewImageFromImage(img), nil
+}
+
+func (f *FS) GetRGBA(path string) (*image.RGBA, error) {
+	imgByte, err := f.filesystem.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	img, _, err := image.Decode(bytes.NewReader(imgByte))
+	if err != nil {
+		return nil, err
+	}
+	if dst, ok := img.(*image.RGBA); ok {
+		return dst, nil
+	}
+	b := img.Bounds()
+	dst := image.NewRGBA(b)
+	draw.Draw(dst, dst.Bounds(), img, b.Min, draw.Src)
+	return dst, nil
 }
 
 func (f *FS) GetFontFace(path string, size, dpi float64) (font.Face, error) {

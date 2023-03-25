@@ -62,3 +62,28 @@ b.Set(s2|s3)
 b.Has(s1|s2)  // true, matched any bit
 b.HasAll(s1|s2) // false, need to match all bits
  ```
+
+ ## Neon light 
+Add neon light effect to an image
+
+Neon adds color `c` within `light` pixels away from any pixels
+with 255 for alpha channel.
+Gaussian blur is applied with sqaure of width `blur`, and `sigma`
+as Gaussian standard deviation
+If `origin`, original image is draw on top of new image
+If `resize`, new image will be larger due to Gaussian effect
+on the edge
+```
+img := LoadPNG("input.png") // import a png file to *image.RGBA
+
+d := 2 // add colour up to 2 pixels aways, from existing pixel with 255 in alpha channel
+k := 3 // 3x3 kernal size for Gaussian blurring
+s := 1 // standard deviation for Gaussian kernal
+yellow := color.RGBA{255,255,0,255}
+origin := true // draw original image on top of the result
+resize := false // remove edge pixel produced by the Gaussin kernal, i.e. false to return same image size as the input
+
+dango.Neon(img, d, k, s, yellow, origin, resize)
+```
+Input image:![input](./static/input.png "Input Image")
+Result image:![result with neon light effect](./static/neon.png "Neon effect")
