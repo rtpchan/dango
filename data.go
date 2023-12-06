@@ -3,6 +3,7 @@ package dango
 import (
 	"bytes"
 	"encoding/csv"
+	"fmt"
 	"image"
 	"image/draw"
 	_ "image/gif"
@@ -41,6 +42,14 @@ func (f *FS) GetImage(path string) (*ebiten.Image, error) {
 	return ebiten.NewImageFromImage(img), nil
 }
 
+func (f *FS) MustGetImage(path string) *ebiten.Image {
+	img, err := f.GetImage(path)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot find %s", path))
+	}
+	return img
+}
+
 func (f *FS) GetRGBA(path string) (*image.RGBA, error) {
 	imgByte, err := f.filesystem.ReadFile(path)
 	if err != nil {
@@ -76,6 +85,14 @@ func (f *FS) GetFontFace(path string, size, dpi float64) (font.Face, error) {
 		return nil, err
 	}
 	return fontface, nil
+}
+
+func (f *FS) MustGetFontFace(path string, size, dpi float64) font.Face {
+	ff, err := f.GetFontFace(path, size, dpi)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot find %s", path))
+	}
+	return ff
 }
 
 // ReadCSV return list of rows, only use for small file
