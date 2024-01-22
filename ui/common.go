@@ -41,6 +41,10 @@ func (b *UI) IsMouseOnButton() bool {
 	return false
 }
 
+func (b *UI) IsHover() bool {
+	return b.IsMouseOnButton()
+}
+
 func (b *UI) IsJustReleased() bool {
 	if b.Active &&
 		inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) &&
