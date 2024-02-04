@@ -59,9 +59,9 @@ func (s *SceneManager) Draw(r *ebiten.Image) {
 
 	r.DrawImage(s.transitionFrom, nil)
 
-	alpha := 1 - float64(s.transitionCount)/float64(s.transitionMaxCount)
+	alpha := 1 - float32(s.transitionCount)/float32(s.transitionMaxCount)
 	op := &ebiten.DrawImageOptions{}
-	op.ColorM.Scale(1, 1, 1, alpha)
+	op.ColorScale.Scale(1, 1, 1, alpha)
 	r.DrawImage(s.transitionTo, op)
 }
 
