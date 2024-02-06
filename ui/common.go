@@ -75,3 +75,9 @@ func (b *UI) IsDown() bool {
 func (b *UI) SetActive(x bool) {
 	b.Active = x
 }
+
+func (b *UI) ResetOptions() {
+	option := &ebiten.DrawImageOptions{}
+	option.GeoM.Translate(float64(b.PosX), float64(b.PosY))
+	b.Op = option
+}
