@@ -5,6 +5,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+type Drawable interface {
+	Draw(*ebiten.Image)
+	SetPos(int, int)
+	GetPos() (int, int)
+	GetSize() (int, int)
+}
+
 // Common UI variables and functions
 type UI struct {
 	Active bool
@@ -80,4 +87,12 @@ func (b *UI) ResetOptions() {
 	option := &ebiten.DrawImageOptions{}
 	option.GeoM.Translate(float64(b.PosX), float64(b.PosY))
 	b.Op = option
+}
+
+func (b *UI) GetPos() (int, int) {
+	return b.PosX, b.PosY
+}
+
+func (b *UI) GetSize() (int, int) {
+	return b.ImgW, b.ImgH
 }

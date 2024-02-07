@@ -8,6 +8,7 @@ import (
 	"golang.org/x/image/font"
 )
 
+// Use text as a button
 type TextButton struct {
 	img *ebiten.Image
 	*UI
