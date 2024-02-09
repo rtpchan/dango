@@ -10,6 +10,12 @@ type Drawable interface {
 	SetPos(int, int)
 	GetPos() (int, int)
 	GetSize() (int, int)
+	SetActive(bool)
+	IsActive() bool
+	IsHover() bool
+	IsDown() bool
+	IsJustPressed() bool
+	IsJustReleased() bool
 }
 
 // Common UI variables and functions
@@ -81,6 +87,10 @@ func (b *UI) IsDown() bool {
 
 func (b *UI) SetActive(x bool) {
 	b.Active = x
+}
+
+func (b *UI) IsActive() bool {
+	return b.Active
 }
 
 func (b *UI) ResetOptions() {

@@ -51,3 +51,43 @@ func (s *List) Draw(screen *ebiten.Image) {
 		ui.Draw(screen)
 	}
 }
+
+// return index of hover UI, return -1 when not hovering
+func (s *List) IsHover() int {
+	for i, ui := range s.uis {
+		if ui.IsHover() {
+			return i
+		}
+	}
+	return -1
+}
+
+// return index of mouse down UI, -1 if none
+func (s *List) IsDown() int {
+	for i, ui := range s.uis {
+		if ui.IsDown() {
+			return i
+		}
+	}
+	return -1
+}
+
+// return index of mouse just pressed UI, -1 if none
+func (s *List) IsJustPressed() int {
+	for i, ui := range s.uis {
+		if ui.IsJustPressed() {
+			return i
+		}
+	}
+	return -1
+}
+
+// return index of mouse just released UI, -1 if none
+func (s *List) IsJustReleased() int {
+	for i, ui := range s.uis {
+		if ui.IsJustReleased() {
+			return i
+		}
+	}
+	return -1
+}
