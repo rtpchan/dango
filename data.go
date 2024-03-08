@@ -105,6 +105,14 @@ func (f *FS) ReadCSV(path string) ([][]string, error) {
 	return r.ReadAll()
 }
 
+func (f *FS) MustReadCSV(path string) [][]string {
+	ff, err := f.ReadCSV(path)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot find %s", path))
+	}
+	return ff
+}
+
 func (f *FS) Open(path string) (fs.File, error) {
 	return f.filesystem.Open(path)
 }
@@ -113,4 +121,12 @@ func (f *FS) ReadDir(path string) ([]fs.DirEntry, error) {
 }
 func (f *FS) ReadFile(path string) ([]byte, error) {
 	return f.filesystem.ReadFile(path)
+}
+
+func (f *FS) MustReadFile(path string) []byte {
+	ff, err := f.ReadFile(path)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot find %s", path))
+	}
+	return ff
 }
