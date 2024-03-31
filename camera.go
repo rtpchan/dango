@@ -5,7 +5,6 @@ package dango
 
 import (
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -38,6 +37,28 @@ func (c *Camera) SetPosition(x, y float64) {
 	c.Position = [2]float64{x, y}
 }
 
+// GetPosition return x, y
+func (c *Camera) GetPosition() (float64, float64) {
+	return c.Position[0], c.Position[1]
+}
+
+func (c *Camera) Pan(x, y float64) {
+	c.Position[0] += x*math.Cos(-c.Rotation) - y*math.Sin(-c.Rotation)
+	c.Position[1] += x*math.Sin(-c.Rotation) + y*math.Cos(-c.Rotation)
+}
+
+func (c *Camera) Rotate(a float64) {
+	c.Rotation += a
+}
+
+func (c *Camera) ZoomIn(n int) {
+	c.ZoomFactor += n
+}
+
+func (c *Camera) ZoomOut(n int) {
+	c.ZoomFactor -= n
+}
+
 func (c *Camera) viewportCenter() f64.Vec2 {
 	return f64.Vec2{
 		c.ViewPort[0] * 0.5,
@@ -51,20 +72,20 @@ func (c *Camera) Update() {
 }
 
 // Matrix return current camera matrix
-// CameraMatrix.Concat(SpriteMatrix)
 func (c *Camera) Matrix() ebiten.GeoM {
 	return c.matrix
 }
 
+// Ebiten GeoM,
+// usage sprite.GeoM.Concat(camera.GeoM)
 func (c *Camera) GeoM() ebiten.GeoM {
 	return c.matrix
 }
 
 // DEPRECATED,  Concat camera's matrix with m
-func (c *Camera) Concat(m ebiten.GeoM) ebiten.GeoM {
-	log.Println("DEPRECATED, use m.Concat(c.GeoM()) instead")
+func (c *Camera) SpriteGeoMConcat(sprite ebiten.GeoM) ebiten.GeoM {
 	nm := ebiten.GeoM{}
-	nm.Concat(m)
+	nm.Concat(sprite)
 	nm.Concat(c.matrix)
 	return nm
 }
@@ -105,6 +126,12 @@ func (c *Camera) ScreenToWorld(posX, posY int) (float64, float64) {
 func (c *Camera) WorldToScreen(wx, wy float64) (float64, float64) {
 	sx, sy := c.matrix.Apply(wx, wy)
 	return sx, sy
+}
+
+// WorldToScreen32 return x, y in float32, ebiten screen drawing use float32
+func (c *Camera) WorldToScreen32(wx, wy float64) (float32, float32) {
+	sx, sy := c.matrix.Apply(wx, wy)
+	return float32(sx), float32(sy)
 }
 
 // IsPointInViewport check is a point in on screen

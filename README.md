@@ -1,9 +1,5 @@
 # Dango 
-**combined and adopted from various libraries, refer to original libraries**
-
-**not tested, not production ready, and ABSOLUTELY NO WARRANTY**
-
-Dango is a collection of functions that can be used with [Ebiten](ebiten.org)
+Dango is a collection of functions that can be used with [Ebitengine](ebitengine.org)
 
 ## data.go - FS
 ### embedded file system
