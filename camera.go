@@ -106,6 +106,11 @@ func (c *Camera) worldMatrix() ebiten.GeoM {
 	return m
 }
 
+func (c *Camera) Scale() float64 {
+	return math.Pow(1.01, float64(c.ZoomFactor))
+}
+
+// Render draw `world` image on screen
 func (c *Camera) Render(screen, world *ebiten.Image) {
 	screen.DrawImage(world, &ebiten.DrawImageOptions{
 		GeoM: c.worldMatrix(),
