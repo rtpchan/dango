@@ -13,6 +13,7 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 )
@@ -93,6 +94,18 @@ func (f *FS) MustGetFontFace(path string, size, dpi float64) font.Face {
 		panic(fmt.Sprintf("Cannot find %s", path))
 	}
 	return ff
+}
+
+func (f *FS) GetGoTextFaceSource(path string) *text.GoTextFaceSource {
+	ff, err := f.ReadFile(path)
+	if err != nil {
+		panic(fmt.Sprintf("Open file error %s", path))
+	}
+	s, err := text.NewGoTextFaceSource(bytes.NewReader(ff))
+	if err != nil {
+		panic(fmt.Sprintf("Parse font file error %s", path))
+	}
+	return s
 }
 
 // ReadCSV return list of rows, only use for small file
