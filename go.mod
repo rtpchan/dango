@@ -1,4 +1,4 @@
-module github.com/iatearock/dango
+module github.com/rtpchan/dango
 
 go 1.22.0
 
