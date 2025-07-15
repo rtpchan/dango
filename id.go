@@ -32,3 +32,7 @@ func (i *ID) SetCurrent(n int) {
 	i.current = n
 	i.lock.Unlock()
 }
+
+func (i *ID) Current() int {
+	return i.current
+}
