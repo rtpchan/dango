@@ -1,42 +1,42 @@
-package main
+package dango
 
 import (
 	"fmt"
 	"math"
 )
 
-type Camera struct {
+type Camera3D struct {
 	pos    Vector3
 	lookAt Vector3
 	fov    float64 // degree, field of view horizonatlly
 	w      float64 // screen size in pixels
 	h      float64
 
-	viewMatrix       []float64 // camera matrix
+	viewMatrix       []float64 // Camera3D matrix
 	projectionMatrix []float64 // perspective matrix
 	viewportMatrix   []float64
 	mvp              []float64 // model-view-perspective
 	combineMatrix    []float64 // viewport * projection * view
 
-	changed bool // track if camera requires update
+	changed bool // track if Camera3D requires update
 }
 
-func NewCamera(pos, lookAt Vector3, fov, w, h float64) *Camera {
-	cam := &Camera{pos: pos, lookAt: lookAt, fov: fov, w: w, h: h, changed: true}
+func NewCamera3D(pos, lookAt Vector3, fov, w, h float64) *Camera3D {
+	cam := &Camera3D{pos: pos, lookAt: lookAt, fov: fov, w: w, h: h, changed: true}
 	cam.Update()
 	return cam
 }
 
-// call after changeing camera parameters
-func (cam *Camera) Update() {
+// call after changeing Camera3D parameters
+func (cam *Camera3D) Update() {
 	if cam.changed {
-		cam.UpdateCamera(cam.pos, cam.lookAt, cam.fov, cam.w, cam.h)
+		cam.UpdateCamera3D(cam.pos, cam.lookAt, cam.fov, cam.w, cam.h)
 		cam.changed = false
 	}
 }
 
-// move the camera
-func (cam *Camera) Move(dir Vector3) {
+// move the Camera3D
+func (cam *Camera3D) Move(dir Vector3) {
 	if dir.Length() == 0. {
 		return
 	}
@@ -51,8 +51,8 @@ func (cam *Camera) Move(dir Vector3) {
 	cam.changed = true
 }
 
-// rotate the camera, need to call Update() the camera manually
-func (cam *Camera) Yaw(rad float64) {
+// rotate the Camera3D, need to call Update() the Camera3D manually
+func (cam *Camera3D) Yaw(rad float64) {
 	if rad == 0. {
 		return
 	}
@@ -64,8 +64,8 @@ func (cam *Camera) Yaw(rad float64) {
 	cam.changed = true
 }
 
-// pitch the camera, need to call Update() the camera manually
-func (cam *Camera) Pitch(rad float64) {
+// pitch the Camera3D, need to call Update() the Camera3D manually
+func (cam *Camera3D) Pitch(rad float64) {
 	if rad == 0. {
 		return
 	}
@@ -87,12 +87,12 @@ func (cam *Camera) Pitch(rad float64) {
 }
 
 // change fov, need to call Update() the camear manually
-func (cam *Camera) FOV(delta float64) {
+func (cam *Camera3D) FOV(delta float64) {
 	cam.fov = cam.fov + delta
 	cam.changed = true
 }
 
-func (cam *Camera) UpdateCamera(pos, lookAt Vector3, fov, w, h float64) {
+func (cam *Camera3D) UpdateCamera3D(pos, lookAt Vector3, fov, w, h float64) {
 	fovX := fov / 180. * math.Pi
 	aspectRatio := w / h
 	fovY := 2. * math.Atan(math.Tan(fovX/2.)/aspectRatio) // radian
@@ -141,7 +141,7 @@ func (cam *Camera) UpdateCamera(pos, lookAt Vector3, fov, w, h float64) {
 	cam.updateCombineMatrix()
 }
 
-func (cam *Camera) updateCombineMatrix() {
+func (cam *Camera3D) updateCombineMatrix() {
 	// ScreenPos = ViewportMatrix * ProjectionMatrix * ViewMatrix * ModelMatrix * WorldPos
 	// projection * view
 	p := cam.projectionMatrix
@@ -158,11 +158,11 @@ func (cam *Camera) updateCombineMatrix() {
 }
 
 // convert world position to screen coordinate
-func (cam *Camera) PosToScreen(p Vector3) []float32 {
+func (cam *Camera3D) PosToScreen(p Vector3) []float32 {
 	c := cam.combineMatrix
 	w := c[12]*p.X + c[13]*p.Y + c[14]*p.Z + c[15]
 	// divide by w for perspective division, when w is -ve, the point is
-	// behind the camera
+	// behind the Camera3D
 	x := (c[0]*p.X + c[1]*p.Y + c[2]*p.Z + c[3]) / w
 	y := (c[4]*p.X + c[5]*p.Y + c[6]*p.Z + c[7]) / w
 	// z, typically between 0 and 1, encodes how deep this point is in the viewport
@@ -172,11 +172,11 @@ func (cam *Camera) PosToScreen(p Vector3) []float32 {
 }
 
 // convert world position to screen coordinate
-func (cam *Camera) WorldToScreen(p []float64) []float64 {
+func (cam *Camera3D) WorldToScreen(p []float64) []float64 {
 	c := cam.combineMatrix
 	w := c[12]*p[0] + c[13]*p[1] + c[14]*p[2] + c[15]
 	// divide by w for perspective division, when w is -ve, the point is
-	// behind the camera
+	// behind the Camera3D
 	x := (c[0]*p[0] + c[1]*p[1] + c[2]*p[2] + c[3]) / w
 	y := (c[4]*p[0] + c[5]*p[1] + c[6]*p[2] + c[7]) / w
 	// z, typically between 0 and 1, encodes how deep this point is in the viewport
@@ -203,11 +203,11 @@ func (cam *Camera) WorldToScreen(p []float64) []float64 {
 
 // give screen coordinates of 2 points
 // {x1 y1 z1 w1 x2 y2 z2 w2}, i.e. point1 [0] v[1], and point2 v[4] v[5]
-// if one point is behind the camera, it will return move that point to where
+// if one point is behind the Camera3D, it will return move that point to where
 // the line intersect with the clip plan
 // if both points are behind, it will return both points  as { 0, 0, 0, -1}
-// return boolean indicates if the line is in front of the camera
-func (cam *Camera) LineToScreen(a Vector3, b Vector3) ([]float32, bool) {
+// return boolean indicates if the line is in front of the Camera3D
+func (cam *Camera3D) LineToScreen(a Vector3, b Vector3) ([]float32, bool) {
 	va := []float64{a.X, a.Y, a.Z, 1.}
 	vb := []float64{b.X, b.Y, b.Z, 1.}
 
@@ -219,12 +219,12 @@ func (cam *Camera) LineToScreen(a Vector3, b Vector3) ([]float32, bool) {
 	behindClipA := pa[3] <= 0 || (pa[2] < 0)
 	behindClipB := pb[3] <= 0 || (pb[2] < 0)
 	if behindClipA && behindClipB {
-		// both points behind camera clip plane
+		// both points behind Camera3D clip plane
 		return []float32{float32(pa[0]), float32(pa[1]), float32(pa[2]), float32(pa[3]), float32(pb[0]), float32(pb[1]), float32(pb[2]), float32(pb[3])}, false
 	}
 
 	if behindClipA || behindClipB {
-		// one of the points is behind camera
+		// one of the points is behind Camera3D
 		// solve for t where the line pa + t(pb-pa) intersects the z=0 plane
 		numerator := pa[2]
 		denominator := pa[2] - pb[2]
@@ -276,7 +276,7 @@ func (cam *Camera) LineToScreen(a Vector3, b Vector3) ([]float32, bool) {
 	return []float32{sa[0], sa[1], sa[2], sa[3], sb[0], sb[1], sb[2], sb[3]}, true
 }
 
-func (cam *Camera) viewportMultMVP() {
+func (cam *Camera3D) viewportMultMVP() {
 	// viewport * temp (mvp matrix)
 	v := cam.viewportMatrix
 	t := cam.mvp
@@ -301,23 +301,23 @@ func (cam *Camera) viewportMultMVP() {
 }
 
 // print a 4 x 4 matrix
-func (cam *Camera) PrintMatrix(m []float64) string {
+func (cam *Camera3D) PrintMatrix(m []float64) string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])
 }
 
 // print a 4 x 1 vector
-func (cam *Camera) PrintVector(m []float64) string {
+func (cam *Camera3D) PrintVector(m []float64) string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n", m[0], m[1], m[2], m[3])
 }
-func (cam *Camera) PrintViewMatrix() string {
+func (cam *Camera3D) PrintViewMatrix() string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n", cam.viewMatrix[0], cam.viewMatrix[1], cam.viewMatrix[2], cam.viewMatrix[3], cam.viewMatrix[4], cam.viewMatrix[5], cam.viewMatrix[6], cam.viewMatrix[7], cam.viewMatrix[8], cam.viewMatrix[9], cam.viewMatrix[10], cam.viewMatrix[11], cam.viewMatrix[12], cam.viewMatrix[13], cam.viewMatrix[14], cam.viewMatrix[15])
 }
-func (cam *Camera) PrintProjectionMatrix() string {
+func (cam *Camera3D) PrintProjectionMatrix() string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n", cam.projectionMatrix[0], cam.projectionMatrix[1], cam.projectionMatrix[2], cam.projectionMatrix[3], cam.projectionMatrix[4], cam.projectionMatrix[5], cam.projectionMatrix[6], cam.projectionMatrix[7], cam.projectionMatrix[8], cam.projectionMatrix[9], cam.projectionMatrix[10], cam.projectionMatrix[11], cam.projectionMatrix[12], cam.projectionMatrix[13], cam.projectionMatrix[14], cam.projectionMatrix[15])
 }
-func (cam *Camera) PrintViewportMatrix() string {
+func (cam *Camera3D) PrintViewportMatrix() string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n", cam.viewportMatrix[0], cam.viewportMatrix[1], cam.viewportMatrix[2], cam.viewportMatrix[3], cam.viewportMatrix[4], cam.viewportMatrix[5], cam.viewportMatrix[6], cam.viewportMatrix[7], cam.viewportMatrix[8], cam.viewportMatrix[9], cam.viewportMatrix[10], cam.viewportMatrix[11], cam.viewportMatrix[12], cam.viewportMatrix[13], cam.viewportMatrix[14], cam.viewportMatrix[15])
 }
-func (cam *Camera) PrintCombineMatrix() string {
+func (cam *Camera3D) PrintCombineMatrix() string {
 	return fmt.Sprintf("%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n%0.4f, %0.4f, %0.4f, %0.4f\n", cam.combineMatrix[0], cam.combineMatrix[1], cam.combineMatrix[2], cam.combineMatrix[3], cam.combineMatrix[4], cam.combineMatrix[5], cam.combineMatrix[6], cam.combineMatrix[7], cam.combineMatrix[8], cam.combineMatrix[9], cam.combineMatrix[10], cam.combineMatrix[11], cam.combineMatrix[12], cam.combineMatrix[13], cam.combineMatrix[14], cam.combineMatrix[15])
 }
