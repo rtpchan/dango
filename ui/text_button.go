@@ -18,13 +18,8 @@ type TextButton struct {
 // to be drawn at posX posY on screen
 func NewTextButton(txt string, c color.Color, face text.Face,
 	posX, posY int, interactive bool) *TextButton {
-	// textRect, _ := font.BoundString(face, txt)
-	// ascent := -textRect.Min.Y.Floor()
-	// imgW := textRect.Max.X.Ceil() + textRect.Min.X.Ceil()
-	// imgH := textRect.Max.Y.Ceil() - textRect.Min.Y.Floor()
 	imgW, imgH := text.Measure(txt, face, 2)
 	op := &text.DrawOptions{}
-	op.GeoM.Translate(0, -imgH)
 	op.ColorScale.ScaleWithColor(c)
 	img := ebiten.NewImage(int(imgW), int(imgH))
 	text.Draw(img, txt, face, op)

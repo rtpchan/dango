@@ -39,9 +39,6 @@ func NewButton(img, hover, press, disable *ebiten.Image, posX, posY int) *Button
 // SetText create text on button, text cannot be remove once set.
 func (b *Button) SetText(txt string, face text.Face, color color.Color) {
 	tw, th := text.Measure(txt, face, 2)
-	// textRect, _ := font.BoundString(face, txt)
-	// tw := int(textRect.Max.X)
-	// th := int(textRect.Max.Y)
 	moveX := (float64(b.ImgW) - tw) / 2
 	moveY := (float64(b.ImgH)-th)/2 + th
 	op := &text.DrawOptions{}
