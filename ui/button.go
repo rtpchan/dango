@@ -4,8 +4,7 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
-	"golang.org/x/image/font"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 type Button struct {
@@ -38,15 +37,19 @@ func NewButton(img, hover, press, disable *ebiten.Image, posX, posY int) *Button
 }
 
 // SetText create text on button, text cannot be remove once set.
-func (b *Button) SetText(txt string, face font.Face, color color.Color) {
-	textRect, _ := font.BoundString(face, txt)
-	tw := int(textRect.Max.X)
-	th := int(textRect.Max.Y)
-	moveX := (b.ImgW - tw) / 2
-	moveY := (b.ImgH-th)/2 + th
-	text.Draw(b.img, txt, face, moveX, moveY, color)
-	text.Draw(b.imgHover, txt, face, moveX, moveY, color)
-	text.Draw(b.imgPress, txt, face, moveX, moveY, color)
+func (b *Button) SetText(txt string, face text.Face, color color.Color) {
+	tw, th := text.Measure(txt, face, 2)
+	// textRect, _ := font.BoundString(face, txt)
+	// tw := int(textRect.Max.X)
+	// th := int(textRect.Max.Y)
+	moveX := (float64(b.ImgW) - tw) / 2
+	moveY := (float64(b.ImgH)-th)/2 + th
+	op := &text.DrawOptions{}
+	op.GeoM.Translate(moveX, moveY)
+	op.ColorScale.ScaleWithColor(color)
+	text.Draw(b.img, txt, face, op)
+	text.Draw(b.imgHover, txt, face, op)
+	text.Draw(b.imgPress, txt, face, op)
 }
 
 // SetText place img on top of the button, img cannot be remove once set.

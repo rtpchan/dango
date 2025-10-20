@@ -4,8 +4,7 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
-	"golang.org/x/image/font"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 // Use text as a button
@@ -17,17 +16,21 @@ type TextButton struct {
 
 // NewButton create a new button with 4 states, normal, hover and press, disable
 // to be drawn at posX posY on screen
-func NewTextButton(txt string, c color.Color, face font.Face,
+func NewTextButton(txt string, c color.Color, face text.Face,
 	posX, posY int, interactive bool) *TextButton {
-	textRect, _ := font.BoundString(face, txt)
-	ascent := -textRect.Min.Y.Floor()
-	imgW := textRect.Max.X.Ceil() + textRect.Min.X.Ceil()
-	imgH := textRect.Max.Y.Ceil() - textRect.Min.Y.Floor()
-	img := ebiten.NewImage(imgW, imgH)
-	text.Draw(img, txt, face, 0, ascent, c)
+	// textRect, _ := font.BoundString(face, txt)
+	// ascent := -textRect.Min.Y.Floor()
+	// imgW := textRect.Max.X.Ceil() + textRect.Min.X.Ceil()
+	// imgH := textRect.Max.Y.Ceil() - textRect.Min.Y.Floor()
+	imgW, imgH := text.Measure(txt, face, 2)
+	op := &text.DrawOptions{}
+	op.GeoM.Translate(0, -imgH)
+	op.ColorScale.ScaleWithColor(c)
+	img := ebiten.NewImage(int(imgW), int(imgH))
+	text.Draw(img, txt, face, op)
 
 	return &TextButton{img: img, interactive: interactive,
-		UI: NewUI(posX, posY, imgW, imgH),
+		UI: NewUI(posX, posY, int(imgW), int(imgH)),
 	}
 }
 
